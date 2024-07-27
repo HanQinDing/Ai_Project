@@ -41,10 +41,10 @@ public class UIController : MonoBehaviour
 
     #region Methods
     /// <summary>
-    /// Sets the CarController from which to get the data from to be displayed.
+    /// Sets the PlayerController from which to get the data from to be displayed.
     /// </summary>
-    /// <param name="target">The CarController to display the data of.</param>
-    public void SetDisplayTarget(CarController target)
+    /// <param name="target">The PlayerController to display the data of.</param>
+    public void SetDisplayTarget(PlayerController target)
     {
         simulationUI.Target = target;
     }

@@ -9,7 +9,7 @@ using UnityEngine;
 /// Class representing a controlling container for a 2D physical simulation
 /// of a car with 5 front facing sensors, detecting the distance to obstacles.
 /// </summary>
-public class CarController : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     #region Members
     #region IDGenerator
@@ -50,14 +50,14 @@ public class CarController : MonoBehaviour
     /// <summary>
     /// The movement component of this car.
     /// </summary>
-    public CarMovement Movement
+    public PlayerMovement Movement
     {
         get;
         private set;
     }
 
     /// <summary>
-    /// The current inputs for controlling the CarMovement component.
+    /// The current inputs for controlling the PlayerMovement component.
     /// </summary>
     public double[] CurrentControlInputs
     {
@@ -81,7 +81,7 @@ public class CarController : MonoBehaviour
     void Awake()
     {
         //Cache components
-        Movement = GetComponent<CarMovement>();
+        Movement = GetComponent<PlayerMovement>();
         SpriteRenderer = GetComponent<SpriteRenderer>();
         sensors = GetComponentsInChildren<Sensor>();
     }

@@ -10,10 +10,10 @@ using System.Collections.Generic;
 /// <summary>
 /// Singleton class managing the current track and all cars racing on it, evaluating each individual.
 /// </summary>
-public class TrackManager : MonoBehaviour
+public class MapManager : MonoBehaviour
 {
     #region Members
-    public static TrackManager Instance
+    public static MapManager Instance
     {
         get;
         private set;
@@ -32,7 +32,7 @@ public class TrackManager : MonoBehaviour
     /// <summary>
     /// Car used to create new cars and to set start position.
     /// </summary>
-    public CarController PrototypeCar;
+    public PlayerController PrototypeCar;
     // Start position for cars
     private Vector3 startPosition;
     private Quaternion startRotation;
@@ -40,12 +40,12 @@ public class TrackManager : MonoBehaviour
     // Struct for storing the current cars and their position on the track.
     private class RaceCar
     {
-        public RaceCar(CarController car = null, uint checkpointIndex = 1)
+        public RaceCar(PlayerController car = null, uint checkpointIndex = 1)
         {
             this.Car = car;
             this.CheckpointIndex = checkpointIndex;
         }
-        public CarController Car;
+        public PlayerController Car;
         public uint CheckpointIndex;
     }
     private List<RaceCar> cars = new List<RaceCar>();
@@ -59,11 +59,11 @@ public class TrackManager : MonoBehaviour
     }
 
     #region Best and Second best
-    private CarController bestCar = null;
+    private PlayerController bestCar = null;
     /// <summary>
     /// The current best car (furthest in the track).
     /// </summary>
-    public CarController BestCar
+    public PlayerController BestCar
     {
         get { return bestCar; }
         private set
@@ -77,7 +77,7 @@ public class TrackManager : MonoBehaviour
                     value.SpriteRenderer.sprite = BestCarSprite;
 
                 //Set previous best to be second best now
-                CarController previousBest = bestCar;
+                PlayerController previousBest = bestCar;
                 bestCar = value;
                 if (BestCarChanged != null)
                     BestCarChanged(bestCar);
@@ -89,13 +89,13 @@ public class TrackManager : MonoBehaviour
     /// <summary>
     /// Event for when the best car has changed.
     /// </summary>
-    public event System.Action<CarController> BestCarChanged;
+    public event System.Action<PlayerController> BestCarChanged;
 
-    private CarController secondBestCar = null;
+    private PlayerController secondBestCar = null;
     /// <summary>
     /// The current second best car (furthest in the track).
     /// </summary>
-    public CarController SecondBestCar
+    public PlayerController SecondBestCar
     {
         get { return secondBestCar; }
         private set
@@ -117,7 +117,7 @@ public class TrackManager : MonoBehaviour
     /// <summary>
     /// Event for when the second best car has changed.
     /// </summary>
-    public event System.Action<CarController> SecondBestCarChanged;
+    public event System.Action<PlayerController> SecondBestCarChanged;
     #endregion
 
     
@@ -137,7 +137,7 @@ public class TrackManager : MonoBehaviour
     {
         if (Instance != null)
         {
-            Debug.LogError("Mulitple instance of TrackManager are not allowed in one Scene.");
+            Debug.LogError("Mulitple instance of MapManager are not allowed in one Scene.");
             return;
         }
 
@@ -198,7 +198,7 @@ public class TrackManager : MonoBehaviour
                 GameObject carCopy = Instantiate(PrototypeCar.gameObject);
                 carCopy.transform.position = startPosition;
                 carCopy.transform.rotation = startRotation;
-                CarController controllerCopy = carCopy.GetComponent<CarController>();
+                PlayerController controllerCopy = carCopy.GetComponent<PlayerController>();
                 cars.Add(new RaceCar(controllerCopy, 1));
                 carCopy.SetActive(true);
             }
@@ -236,7 +236,7 @@ public class TrackManager : MonoBehaviour
     /// <summary>
     /// Returns an Enumerator for iterator through all cars currently on the track.
     /// </summary>
-    public IEnumerator<CarController> GetCarEnumerator()
+    public IEnumerator<PlayerController> GetCarEnumerator()
     {
         for (int i = 0; i < cars.Count; i++)
             yield return cars[i].Car;
@@ -269,7 +269,7 @@ public class TrackManager : MonoBehaviour
 
     // Calculates the completion percentage of given car with given completed last checkpoint.
     // This method will update the given checkpoint index accordingly to the current position.
-    private float GetCompletePerc(CarController car, ref uint curCheckpointIndex)
+    private float GetCompletePerc(PlayerController car, ref uint curCheckpointIndex)
     {
         //Already all checkpoints captured
         if (curCheckpointIndex >= checkpoints.Length)

@@ -213,8 +213,8 @@ public class EvolutionManager : MonoBehaviour
         foreach (Genotype genotype in currentPopulation)
             agents.Add(new Agent(genotype, MathHelper.SoftSignFunction, FNNTopology));
 
-        TrackManager.Instance.SetCarAmount(agents.Count);
-        IEnumerator<CarController> carsEnum = TrackManager.Instance.GetCarEnumerator();
+        MapManager.Instance.SetCarAmount(agents.Count);
+        IEnumerator<PlayerController> carsEnum = MapManager.Instance.GetCarEnumerator();
         for (int i = 0; i < agents.Count; i++)
         {
             if (!carsEnum.MoveNext())
@@ -228,7 +228,7 @@ public class EvolutionManager : MonoBehaviour
             agents[i].AgentDied += OnAgentDied;
         }
 
-        TrackManager.Instance.Restart();
+        MapManager.Instance.Restart();
     }
 
     // Callback for when an agent died.

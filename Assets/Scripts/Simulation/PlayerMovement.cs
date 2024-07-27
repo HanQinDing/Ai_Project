@@ -9,7 +9,7 @@ using System.Collections;
 /// <summary>
 /// Component for car movement and collision detection.
 /// </summary>
-public class CarMovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
     #region Members
     /// <summary>
@@ -23,7 +23,7 @@ public class CarMovement : MonoBehaviour
     private const float VEL_FRICT = 2f;
     private const float TURN_SPEED = 100;
 
-    private CarController controller;
+    private PlayerController controller;
 
     /// <summary>
     /// The current velocity of the car.
@@ -56,7 +56,7 @@ public class CarMovement : MonoBehaviour
     #region Constructors
     void Start()
     {
-        controller = GetComponent<CarController>();
+        controller = GetComponent<PlayerController>();
     }
     #endregion
 

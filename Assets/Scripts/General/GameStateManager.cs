@@ -1,4 +1,4 @@
-﻿/// Author: Samuel Arzt
+/// Author: Samuel Arzt
 /// Date: March 2017
 
 #region Includes
@@ -35,7 +35,7 @@ public class GameStateManager : MonoBehaviour
         private set;
     }
 
-    private CarController prevBest, prevSecondBest;
+    private PlayerController prevBest, prevSecondBest;
     #endregion
 
     #region Constructors
@@ -52,19 +52,19 @@ public class GameStateManager : MonoBehaviour
         SceneManager.LoadScene("GUI", LoadSceneMode.Additive);
 
         //Load track
-        SceneManager.LoadScene(TrackName, LoadSceneMode.Additive);
+        SceneManager.LoadScene("Map", LoadSceneMode.Additive);
     }
 
     void Start ()
     {
-        TrackManager.Instance.BestCarChanged += OnBestCarChanged;
+        MapManager.Instance.BestCarChanged += OnBestCarChanged;
         EvolutionManager.Instance.StartEvolution();
 	}
     #endregion
 
     #region Methods
     // Callback method for when the best car has changed.
-    private void OnBestCarChanged(CarController bestCar)
+    private void OnBestCarChanged(PlayerController bestCar)
     {
         if (bestCar == null)
             Camera.SetTarget(null);
