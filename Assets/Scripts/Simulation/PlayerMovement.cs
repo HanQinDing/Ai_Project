@@ -1,5 +1,5 @@
-﻿/// Author: Samuel Arzt
-/// Date: March 2017
+﻿
+
 
 #region Includes
 using UnityEngine;
@@ -16,7 +16,9 @@ public class PlayerMovement : MonoBehaviour
     /// Event for when the car hit a wall.
     /// </summary>
     public event System.Action HitWall;
-
+    public Rigidbody2D rb;
+    public double speed, jumpforce;
+    public Collider2D col;
     //Movement constants
     private const float MAX_VEL = 20f;
     private const float ACCELERATION = 8f;
@@ -44,12 +46,14 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private double horizontalInput, verticalInput; //Horizontal = engine force, Vertical = turning force
+    private bool isCollidingWithTargetLayer;
+
     /// <summary>
     /// The current inputs for turning and engine force in this order.
     /// </summary>
     public double[] CurrentInputs
     {
-        get { return new double[] { horizontalInput, verticalInput }; }
+        get { return new double[] { horizontalInput, verticalInput, speed, jumpforce }; }
     }
     #endregion
 
@@ -70,9 +74,9 @@ public class PlayerMovement : MonoBehaviour
 
         ApplyInput();
 
-        ApplyVelocity();
+        //ApplyVelocity();
 
-        ApplyFriction();
+        //ApplyFriction();
 	}
 
     // Checks for user input
@@ -85,39 +89,20 @@ public class PlayerMovement : MonoBehaviour
     // Applies the currently set input
     private void ApplyInput()
     {
-        //Cap input 
-        if (verticalInput > 1)
-            verticalInput = 1;
-        else if (verticalInput < -1)
-            verticalInput = -1;
-
-        if (horizontalInput > 1)
-            horizontalInput = 1;
-        else if (horizontalInput < -1)
-            horizontalInput = -1;
-
-        //Car can only accelerate further if velocity is lower than engineForce * MAX_VEL
-        bool canAccelerate = false;
-        if (verticalInput < 0)
-            canAccelerate = Velocity > verticalInput * MAX_VEL;
-        else if (verticalInput > 0)
-            canAccelerate = Velocity < verticalInput * MAX_VEL;
-        
-        //Set velocity
-        if (canAccelerate)
-        {
-            Velocity += (float)verticalInput * ACCELERATION * Time.deltaTime;
-
-            //Cap velocity
-            if (Velocity > MAX_VEL)
-                Velocity = MAX_VEL;
-            else if (Velocity < -MAX_VEL)
-                Velocity = -MAX_VEL;
+        if (horizontalInput > 0)
+        { // move right 
+            rb.velocity = new Vector2((float)speed, rb.velocity.y);
+            transform.localScale = new Vector2(1, 1);
         }
-        
-        //Set rotation
-        Rotation = transform.rotation;
-        Rotation *= Quaternion.AngleAxis((float)-horizontalInput * TURN_SPEED * Time.deltaTime, new Vector3(0, 0, 1));
+        else if (horizontalInput < 0) { // move left
+            rb.velocity = new Vector2(-(float)speed, rb.velocity.y);
+            transform.localScale = new Vector2(-1, 1);
+        }
+
+        if (verticalInput > 0 && isCollidingWithTargetLayer) {
+            rb.velocity = new Vector2(rb.velocity.x, (float)jumpforce);
+
+        }
     }
 
     /// <summary>
@@ -129,7 +114,25 @@ public class PlayerMovement : MonoBehaviour
         horizontalInput = input[0];
         verticalInput = input[1];
     }
+    void OnCollisionStay2D(Collision2D collision)
+    {
+        // Check if the layer of the colliding object matches the target layer
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Platform"))
+        {
+            isCollidingWithTargetLayer = true;
+            //Debug.Log("Continuing to collide with object on target layer: " + targetLayerName);
+        }
+    }
 
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        // Check if the layer of the colliding object matches the target layer
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Platform"))
+        {
+            isCollidingWithTargetLayer = false;
+            //Debug.Log("Stopped colliding with object on target layer: " + targetLayerName);
+        }
+    }
     // Applies the current velocity to the position of the car.
     private void ApplyVelocity()
     {
@@ -161,11 +164,16 @@ public class PlayerMovement : MonoBehaviour
     }
 
     // Unity method, triggered when collision was detected.
-    void OnCollisionEnter2D()
+    void OnCollisionEnter2D(Collision2D collision)
     {
-        if (HitWall != null)
-            HitWall();
+        // Replace 'yourLayerName' with the name of the layer you want to check
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        {
+            if (HitWall != null)
+                HitWall();
+        }
     }
+
 
     /// <summary>
     /// Stops all current movement of the car.

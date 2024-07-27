@@ -1,5 +1,5 @@
-﻿/// Author: Samuel Arzt
-/// Date: March 2017
+﻿
+
 
 #region Includes
 using UnityEngine;
@@ -43,9 +43,17 @@ public class Sensor : MonoBehaviour
     // Unity method for updating the simulation
     void FixedUpdate ()
     {
+        float dirchange = 1.0f;
+        GameObject parentObject = transform.parent.gameObject;
+        if (parentObject != null)
+        {
+            dirchange = parentObject.transform.localScale.x;
+
+        }
         //Calculate direction of sensor
         Vector2 direction = Cross.transform.position - this.transform.position;
         direction.Normalize();
+        direction.x *= dirchange;
 
         //Send raycast into direction of sensor
         RaycastHit2D hit =  Physics2D.Raycast(this.transform.position, direction, MAX_DIST, LayerToSense);
